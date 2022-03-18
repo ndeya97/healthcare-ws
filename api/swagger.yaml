@@ -1,0 +1,231 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a webservice server for the repository management of healthcare"
+  version: "1.0.0"
+  title: "Swagger Heathcare webservice"
+  termsOfService: "http://healthcare-ws.io/terms/"
+  contact:
+    email: "nadiop97@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:8080"
+tags:
+- name: "doctor"
+  description: "Everything about your Doctors"
+  externalDocs:
+    description: "Find out more"
+    url: "localhost:8080//healthcare-ws/doctors/"
+- name: "patient"
+  description: "Everything about your Patients"
+  externalDocs:
+    description: "Find out more"
+    url: "localhost:8080//healthcare-ws/patients/"
+- name: "admin"
+  description: "Everything about the admin"
+  externalDocs:
+    description: "Find out more"
+    url: "localhost:8080//healthcare-ws/admin/"
+schemes:
+- "https"
+- "http"
+paths:
+  /addDoctor:
+    post:
+      tags:
+      - "doctor"
+      summary: "Add a new doctor to the healthcare repository"
+      description: ""
+      operationId: "addDoctor"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Doctor object that needs to be added to the repository"
+        required: true
+        schema:
+          $ref: "#/definitions/Doctor"
+      security:
+      - doctor_auth:
+        - "write:doctors"
+        - "read:doctors"
+      responses:
+        "405":
+          description: "Invalid input"
+      x-swagger-router-controller: "Doctor"
+    put:
+      tags:
+      - "doctor"
+      summary: "Update an existing doctor"
+      description: ""
+      operationId: "updateDoctor"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Doctor object that needs to be added to the repository"
+        required: true
+        schema:
+          $ref: "#/definitions/Patient"
+      security:
+      - patient_auth:
+        - "write:patients"
+        - "read:patients"
+      responses:
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Doctor not found"
+        "405":
+          description: "Validation exception"
+      x-swagger-router-controller: "Doctor"
+  /doctors/findBySpeciality:
+    get:
+      tags:
+      - "patient"
+      summary: "Finds Doctors by specialities"
+      description: "Multiple doctors specialities can be provided with comma separated\
+        \ strings"
+      operationId: "findPetsBySpeciality"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "speciality"
+        in: "query"
+        description: "Speciality values that need to be considered for filter"
+        required: true
+        type: "array"
+        items:
+          type: "string"
+          default: "generalist"
+          enum:
+          - "generalist"
+          - "ophthalmologist"
+          - "dentiste"
+        collectionFormat: "multi"
+      security:
+      - doctor_auth:
+        - "write:doctors"
+        - "read:doctors"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Doctor"
+        "400":
+          description: "Invalid status value"
+      x-swagger-router-controller: "Patient"
+  /doctor/addFollowUpPatient:
+    post:
+      tags:
+      - "admin"
+      summary: "Add a new patient to a doctor patients list"
+      description: ""
+      operationId: "addPatient"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Patient object that needs to be added to doctor repository"
+        required: true
+        schema:
+          $ref: "#/definitions/PatientFollowUp"
+      security:
+      - patient_auth:
+        - "write:patients"
+        - "read:patients"
+      responses:
+        "405":
+          description: "Invalid input"
+      x-swagger-router-controller: "Admin"
+securityDefinitions:
+  doctor_auth:
+    type: "oauth2"
+    authorizationUrl: "localhost:8080//oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:doctors: "modify doctors in your account"
+      read:doctors: "read your doctors"
+  patient_auth:
+    type: "oauth2"
+    authorizationUrl: "localhost:8080//oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:patients: "modify patients in your account"
+      read:patients: "read your patients"
+definitions:
+  Doctor:
+    type: "object"
+    properties:
+      doctorId:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+        description: "doctor name"
+      speciality:
+        type: "string"
+        description: "doctor speciality"
+      sexe:
+        type: "boolean"
+        description: "Doctor sexe"
+    xml:
+      name: "Doctor"
+    example:
+      speciality: "speciality"
+      doctorId: 0
+      name: "name"
+      sexe: "woman"
+  Patient:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+      age:
+        type: "integer"
+        format: "int64"
+      pathology:
+        type: "string"
+    xml:
+      name: "Patient"
+    example:
+      pathology: "pathology"
+      name: "name"
+      id: 0
+      age: 6
+  PatientFollowUp:
+    type: "object"
+    properties:
+      idPatient:
+        type: "integer"
+        format: "int64"
+      idDoctor:
+        type: "integer"
+        format: "int64"
+    xml:
+      name: "PatientFollowUp"
+    example:
+      idDoctor: 6
+      idPatient: 0
