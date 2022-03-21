@@ -3,6 +3,7 @@
 var utils = require('../utils/writer.js');
 var Doctor = require('../service/DoctorService');
 
+
 module.exports.addDoctor = function addDoctor (req, res, next) {
   var body = req.swagger.params['body'].value;
   Doctor.addDoctor(body)

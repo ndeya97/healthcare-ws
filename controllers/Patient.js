@@ -3,9 +3,9 @@
 var utils = require('../utils/writer.js');
 var Patient = require('../service/PatientService');
 
-module.exports.findPetsBySpeciality = function findPetsBySpeciality (req, res, next) {
+module.exports.findDoctorsBySpeciality = function findDoctorsBySpeciality (req, res, next) {
   var speciality = req.swagger.params['speciality'].value;
-  Patient.findPetsBySpeciality(speciality)
+  Patient.findDoctorsBySpeciality(speciality)
     .then(function (response) {
       utils.writeJson(res, response);
     })

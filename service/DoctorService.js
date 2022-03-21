@@ -1,5 +1,7 @@
 'use strict';
 
+const Doctor = require('../models/Doctor');
+
 
 /**
  * Add a new doctor to the healthcare repository
@@ -9,8 +11,21 @@
  * no response value expected for this operation
  **/
 exports.addDoctor = function(body) {
-  return new Promise(function(resolve, reject) {
-    resolve();
+  return new Promise( async function(resolve, reject) {
+    const doctor = new Doctor(body);
+    try {
+       const newDoctor = await doctor.save();
+       newDoctor.forEach(element => {
+        console.log(element.data())
+       });
+       return {
+           success: true,
+           data: newDoctor,
+       };
+      
+     } catch (err) {
+         return { success: false, message: "Failed to add doctor" };
+     }
   });
 }
 
