@@ -1,18 +1,25 @@
 'use strict';
 
+const express = require('express');
 const connectDB = require("./config/db");
+const { doctors } = require("./routes/index");
+
 
 var fs = require('fs'),
     path = require('path'),
     http = require('http');
 
-var app = require('connect')();
+var app = express();
 var swaggerTools = require('swagger-tools');
 var jsyaml = require('js-yaml');
 var serverPort = 8080;
 
 //Connect to DB
 connectDB(); 
+
+
+app.use('/doctors', doctors)
+
 
 // swaggerRouter configuration
 var options = {
@@ -24,6 +31,15 @@ var options = {
 // The Swagger document (require it, build it programmatically, fetch it from a URL, ...)
 var spec = fs.readFileSync(path.join(__dirname,'api/swagger.yaml'), 'utf8');
 var swaggerDoc = jsyaml.safeLoad(spec);
+
+
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+});
+
+app.use('/doctors', doctors)
 
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
@@ -45,5 +61,7 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
     console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
     console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
   });
+
+
 
 });

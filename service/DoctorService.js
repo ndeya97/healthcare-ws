@@ -3,6 +3,25 @@
 const Doctor = require('../models/Doctor');
 
 
+
+exports.getAllDoctors = async function(search, reqPage, reqLimit) {
+  return new Promise( async function(resolve, reject) {
+    let options = {};
+
+    if (search) {
+        options = {
+            ...options,
+            $or: [
+                {name: new RegExp(search.toString(), 'i')},
+                {catchphrase: new RegExp(search.toString(), 'i')}
+            ]
+        }
+      } else {
+        resolve();
+      }    
+  });
+}
+
 /**
  * Add a new doctor to the healthcare repository
  * 
@@ -10,7 +29,7 @@ const Doctor = require('../models/Doctor');
  * body Doctor Doctor object that needs to be added to the repository
  * no response value expected for this operation
  **/
-exports.addDoctor = function(body) {
+exports.addDoctor = async function(body) {
   return new Promise( async function(resolve, reject) {
     const doctor = new Doctor(body);
     try {
@@ -22,11 +41,12 @@ exports.addDoctor = function(body) {
            success: true,
            data: newDoctor,
        };
-      
+  
      } catch (err) {
          return { success: false, message: "Failed to add doctor" };
      }
-  });
+  }); 
+  resolve();
 }
 
 

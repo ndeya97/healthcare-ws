@@ -37,7 +37,7 @@ paths:
       - "doctor"
       summary: "Add a new doctor to the healthcare repository"
       description: ""
-      operationId: "addDoctor"
+      operationId: addDoctor
       consumes:
       - "application/json"
       - "application/xml"
@@ -64,7 +64,7 @@ paths:
       - "doctor"
       summary: "Update an existing doctor"
       description: ""
-      operationId: "updateDoctor"
+      operationId: updateDoctor
       consumes:
       - "application/json"
       - "application/xml"
@@ -97,7 +97,7 @@ paths:
       summary: "Finds Doctors by specialities"
       description: "Multiple doctors specialities can be provided with comma separated\
         \ strings"
-      operationId: "findPetsBySpeciality"
+      operationId: findPetsBySpeciality
       produces:
       - "application/xml"
       - "application/json"
